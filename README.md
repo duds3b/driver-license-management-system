@@ -30,26 +30,31 @@ Install the required dependency:
 pip install mysql-connector-python
 ```
 
+Create the database by running the `database.sql` file in MySQL.
+
 Then configure the database connection in the `main.py` file:
 
 ```python
-conexao = mysql.connector.connect(
+connection = mysql.connector.connect(
     host="localhost",
     user="root",
     password="YOUR_PASSWORD_HERE",
-    database="YOUR_DATABASE_HERE"
+    database="mydb"
 )
 ```
 
 In the `password` field, enter your MySQL password.
 
-In the `database` field, enter the name of the database you want to use.
+The `database` field is already set to `mydb`, which is the database created by `database.sql`.
 
 Do not publish your real password on GitHub.
 
 ## Database
 
-The `database.sql` file contains the commands needed to create the tables used by the system.
+The `database.sql` file contains the commands needed to create the database and the tables used by the system:
+
+* `pessoa`: stores people
+* `habilitacao`: stores driver's licenses, each one linked to a person
 
 ## Running
 
