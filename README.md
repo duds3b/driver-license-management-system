@@ -1,62 +1,62 @@
-# Sistema de Gestão de Habilitações
+# Driver's License Management System
 
-Projeto desenvolvido em Python com integração ao MySQL para praticar conceitos de banco de dados e operações CRUD.
+A project built in Python with MySQL integration to practice database concepts and CRUD operations.
 
-## Funcionalidades
+## Features
 
-* Cadastro de pessoas
-* Cadastro de habilitações vinculadas a uma pessoa
-* Listagem de pessoas
-* Listagem de pessoas com suas habilitações
-* Busca de pessoas por nome
-* Verificação de habilitação válida ou vencida
-* Edição de pessoas
-* Exclusão de pessoas
-* Edição de habilitações
-* Exclusão de habilitações
-* Alerta para habilitações vencendo em até 30 dias
+* Register people
+* Register driver's licenses linked to a person
+* List people
+* List people with their driver's licenses
+* Search people by name
+* Check whether a license is valid or expired
+* Edit people
+* Delete people
+* Edit driver's licenses
+* Delete driver's licenses
+* Alert for licenses expiring within 30 days
 
-## Tecnologias utilizadas
+## Technologies
 
 * Python
 * MySQL
 * MySQL Connector for Python
 
-## Instalação
+## Installation
 
-Instale a dependência necessária:
+Install the required dependency:
 
 ```bash
 pip install mysql-connector-python
 ```
 
-Depois, configure a conexão com o banco de dados no arquivo `main.py`:
+Then configure the database connection in the `main.py` file:
 
 ```python
 conexao = mysql.connector.connect(
     host="localhost",
     user="root",
-    password="SUA_SENHA_AQUI",
-    database="SEU_BANCO_AQUI"
+    password="YOUR_PASSWORD_HERE",
+    database="YOUR_DATABASE_HERE"
 )
 ```
 
-No campo `password`, coloque a senha do seu MySQL.
+In the `password` field, enter your MySQL password.
 
-No campo `database`, coloque o nome do banco de dados que você deseja utilizar.
+In the `database` field, enter the name of the database you want to use.
 
-Não publique sua senha real no GitHub.
+Do not publish your real password on GitHub.
 
-## Banco de dados
+## Database
 
-O arquivo `database.sql` contém os comandos necessários para criar as tabelas utilizadas pelo sistema.
+The `database.sql` file contains the commands needed to create the tables used by the system.
 
-## Execução
+## Running
 
-Depois de configurar o banco de dados e instalar o MySQL Connector, execute:
+After setting up the database and installing MySQL Connector, run:
 
 ```bash
 python main.py
 ```
 
-O sistema funciona pelo terminal e utiliza entradas do usuário por meio de `input()`.
+The system runs in the terminal and uses user input through `input()`.
