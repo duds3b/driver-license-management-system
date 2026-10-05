@@ -1,68 +1,68 @@
 import mysql.connector
-from datetime import date, datetime, timedelta
+from datetime import date, timedelta
 
 # =========================
-# CONEXÃO COM O BANCO
+# DATABASE CONNECTION
 # =========================
 
-conexao = mysql.connector.connect(
+connection = mysql.connector.connect(
     host="localhost",
     user="root",
-    password="SUA_SENHA_AQUI",
-    database="SEU_DATABASE_AQUI"
+    password="YOUR_PASSWORD_HERE",
+    database="mydb"
 )
 
-cursor = conexao.cursor()
+cursor = connection.cursor()
 
 
 # =========================
-# CADASTRAR PESSOA
+# REGISTER PERSON
 # =========================
 
-def cadastrar_pessoa():
-    nome = input("Digite o nome: ")
-    sobrenome = input("Digite o sobrenome: ")
+def register_person():
+    first_name = input("Enter the first name: ")
+    last_name = input("Enter the last name: ")
 
     sql = """
-    INSERT INTO pessoa (nome, sobrenome)
+    INSERT INTO pessoa (Nome, Sobrenome)
     VALUES (%s, %s)
     """
 
-    valores = (nome, sobrenome)
+    values = (first_name, last_name)
 
-    cursor.execute(sql, valores)
-    conexao.commit()
+    cursor.execute(sql, values)
+    connection.commit()
 
-    print("Pessoa cadastrada com sucesso!")
+    print("Person registered successfully!")
 
 
 # =========================
-# LISTAR PESSOAS
+# LIST PEOPLE
 # =========================
 
-def listar_pessoas():
+def list_people():
     cursor.execute("SELECT * FROM pessoa")
 
-    resultados = cursor.fetchall()
+    results = cursor.fetchall()
 
-    if len(resultados) == 0:
-        print("Nenhuma pessoa cadastrada.")
+    if len(results) == 0:
+        print("No people registered.")
         return
 
-    for linha in resultados:
-        print(linha)
+    for row in results:
+        print(row)
 
 
 # =========================
-# CADASTRAR HABILITAÇÃO
+# REGISTER LICENSE
 # =========================
 
-def cadastrar_habilitacao():
-    listar_pessoas()
+def register_license():
+    list_people()
 
-    pessoa_id = int(input("Digite o ID da pessoa: "))
-    numero = input("Digite o número da CNH: ")
-    validade = input("Digite a validade (AAAA-MM-DD): ")
+    person_id = int(input("Enter the person ID: "))
+    number = input("Enter the license number: ")
+    expiration = input("Enter the expiration date (YYYY-MM-DD): ")
 
     sql = """
     INSERT INTO habilitacao
@@ -70,19 +70,19 @@ def cadastrar_habilitacao():
     VALUES (%s, %s, %s)
     """
 
-    valores = (numero, validade, pessoa_id)
+    values = (number, expiration, person_id)
 
-    cursor.execute(sql, valores)
-    conexao.commit()
+    cursor.execute(sql, values)
+    connection.commit()
 
-    print("Habilitação cadastrada com sucesso!")
+    print("License registered successfully!")
 
 
 # =========================
-# LISTAR PESSOAS + CNH
+# LIST PEOPLE + LICENSES
 # =========================
 
-def listar_pessoas_habilitacoes():
+def list_people_with_licenses():
     sql = """
     SELECT
         pessoa.Id_pessoa,
@@ -97,18 +97,18 @@ def listar_pessoas_habilitacoes():
 
     cursor.execute(sql)
 
-    resultados = cursor.fetchall()
+    results = cursor.fetchall()
 
-    for linha in resultados:
-        print(linha)
+    for row in results:
+        print(row)
 
 
 # =========================
-# BUSCAR PESSOA
+# SEARCH PERSON
 # =========================
 
-def buscar_pessoa():
-    nome = input("Digite o nome da pessoa: ")
+def search_person():
+    name = input("Enter the person's name: ")
 
     sql = """
     SELECT
@@ -123,37 +123,37 @@ def buscar_pessoa():
     WHERE pessoa.Nome LIKE %s
     """
 
-    cursor.execute(sql, ("%" + nome + "%",))
+    cursor.execute(sql, ("%" + name + "%",))
 
-    resultados = cursor.fetchall()
+    results = cursor.fetchall()
 
-    if len(resultados) == 0:
-        print("Pessoa não encontrada.")
+    if len(results) == 0:
+        print("Person not found.")
         return
 
-    for linha in resultados:
-        print(linha)
+    for row in results:
+        print(row)
 
-        validade = linha[4]
+        expiration = row[4]
 
-        if validade is not None:
-            if validade < date.today():
-                print("CNH VENCIDA")
+        if expiration is not None:
+            if expiration < date.today():
+                print("LICENSE EXPIRED")
             else:
-                print("CNH VÁLIDA")
+                print("LICENSE VALID")
 
 
 # =========================
-# EDITAR PESSOA
+# EDIT PERSON
 # =========================
 
-def editar_pessoa():
-    listar_pessoas()
+def edit_person():
+    list_people()
 
-    pessoa_id = int(input("Digite o ID da pessoa: "))
+    person_id = int(input("Enter the person ID: "))
 
-    novo_nome = input("Digite o novo nome: ")
-    novo_sobrenome = input("Digite o novo sobrenome: ")
+    new_first_name = input("Enter the new first name: ")
+    new_last_name = input("Enter the new last name: ")
 
     sql = """
     UPDATE pessoa
@@ -161,48 +161,48 @@ def editar_pessoa():
     WHERE Id_pessoa = %s
     """
 
-    valores = (novo_nome, novo_sobrenome, pessoa_id)
+    values = (new_first_name, new_last_name, person_id)
 
-    cursor.execute(sql, valores)
-    conexao.commit()
+    cursor.execute(sql, values)
+    connection.commit()
 
-    print("Pessoa editada com sucesso!")
+    print("Person updated successfully!")
 
 
 # =========================
-# EXCLUIR PESSOA
+# DELETE PERSON
 # =========================
 
-def excluir_pessoa():
-    listar_pessoas()
+def delete_person():
+    list_people()
 
-    pessoa_id = int(input("Digite o ID da pessoa que deseja excluir: "))
+    person_id = int(input("Enter the ID of the person to delete: "))
 
-    # primeiro apaga a habilitação vinculada
+    # first delete the linked licenses
     cursor.execute(
         "DELETE FROM habilitacao WHERE Pessoa_Id_pessoa = %s",
-        (pessoa_id,)
+        (person_id,)
     )
 
-    # depois apaga a pessoa
+    # then delete the person
     cursor.execute(
         "DELETE FROM pessoa WHERE Id_pessoa = %s",
-        (pessoa_id,)
+        (person_id,)
     )
 
-    conexao.commit()
+    connection.commit()
 
-    print("Pessoa excluída com sucesso!")
+    print("Person deleted successfully!")
 
 
 # =========================
-# EDITAR HABILITAÇÃO
+# EDIT LICENSE
 # =========================
 
-def editar_habilitacao():
-    numero = input("Digite o número da CNH que deseja editar: ")
+def edit_license():
+    number = input("Enter the license number to edit: ")
 
-    nova_validade = input("Digite a nova validade (AAAA-MM-DD): ")
+    new_expiration = input("Enter the new expiration date (YYYY-MM-DD): ")
 
     sql = """
     UPDATE habilitacao
@@ -210,39 +210,39 @@ def editar_habilitacao():
     WHERE Num_Habilitacao = %s
     """
 
-    valores = (nova_validade, numero)
+    values = (new_expiration, number)
 
-    cursor.execute(sql, valores)
-    conexao.commit()
+    cursor.execute(sql, values)
+    connection.commit()
 
-    print("Habilitação editada com sucesso!")
+    print("License updated successfully!")
 
 
 # =========================
-# EXCLUIR HABILITAÇÃO
+# DELETE LICENSE
 # =========================
 
-def excluir_habilitacao():
-    numero = input("Digite o número da CNH: ")
+def delete_license():
+    number = input("Enter the license number: ")
 
     sql = """
     DELETE FROM habilitacao
     WHERE Num_Habilitacao = %s
     """
 
-    cursor.execute(sql, (numero,))
-    conexao.commit()
+    cursor.execute(sql, (number,))
+    connection.commit()
 
-    print("Habilitação excluída com sucesso!")
+    print("License deleted successfully!")
 
 
 # =========================
-# ALERTA DE VENCIMENTO
+# EXPIRATION ALERT
 # =========================
 
-def verificar_vencimentos():
-    hoje = date.today()
-    limite = hoje + timedelta(days=30)
+def check_expirations():
+    today = date.today()
+    limit = today + timedelta(days=30)
 
     sql = """
     SELECT
@@ -256,18 +256,18 @@ def verificar_vencimentos():
     WHERE habilitacao.Validade BETWEEN %s AND %s
     """
 
-    cursor.execute(sql, (hoje, limite))
+    cursor.execute(sql, (today, limit))
 
-    resultados = cursor.fetchall()
+    results = cursor.fetchall()
 
-    if len(resultados) == 0:
-        print("Nenhuma CNH vencendo nos próximos 30 dias.")
+    if len(results) == 0:
+        print("No licenses expiring in the next 30 days.")
         return
 
-    print("\nCNHs vencendo em até 30 dias:")
+    print("\nLicenses expiring within 30 days:")
 
-    for linha in resultados:
-        print(linha)
+    for row in results:
+        print(row)
 
 
 # =========================
@@ -275,59 +275,59 @@ def verificar_vencimentos():
 # =========================
 
 while True:
-    print("\n===== SISTEMA DE GESTÃO DE CNH =====")
+    print("\n===== DRIVER'S LICENSE MANAGEMENT SYSTEM =====")
 
-    print("1 - Cadastrar pessoa")
-    print("2 - Listar pessoas")
-    print("3 - Cadastrar habilitação")
-    print("4 - Listar pessoas e habilitações")
-    print("5 - Buscar pessoa")
-    print("6 - Editar pessoa")
-    print("7 - Excluir pessoa")
-    print("8 - Editar habilitação")
-    print("9 - Excluir habilitação")
-    print("10 - Verificar CNHs vencendo")
-    print("0 - Sair")
+    print("1 - Register person")
+    print("2 - List people")
+    print("3 - Register license")
+    print("4 - List people and licenses")
+    print("5 - Search person")
+    print("6 - Edit person")
+    print("7 - Delete person")
+    print("8 - Edit license")
+    print("9 - Delete license")
+    print("10 - Check expiring licenses")
+    print("0 - Exit")
 
-    opcao = input("Escolha uma opção: ")
+    option = input("Choose an option: ")
 
-    if opcao == "1":
-        cadastrar_pessoa()
+    if option == "1":
+        register_person()
 
-    elif opcao == "2":
-        listar_pessoas()
+    elif option == "2":
+        list_people()
 
-    elif opcao == "3":
-        cadastrar_habilitacao()
+    elif option == "3":
+        register_license()
 
-    elif opcao == "4":
-        listar_pessoas_habilitacoes()
+    elif option == "4":
+        list_people_with_licenses()
 
-    elif opcao == "5":
-        buscar_pessoa()
+    elif option == "5":
+        search_person()
 
-    elif opcao == "6":
-        editar_pessoa()
+    elif option == "6":
+        edit_person()
 
-    elif opcao == "7":
-        excluir_pessoa()
+    elif option == "7":
+        delete_person()
 
-    elif opcao == "8":
-        editar_habilitacao()
+    elif option == "8":
+        edit_license()
 
-    elif opcao == "9":
-        excluir_habilitacao()
+    elif option == "9":
+        delete_license()
 
-    elif opcao == "10":
-        verificar_vencimentos()
+    elif option == "10":
+        check_expirations()
 
-    elif opcao == "0":
-        print("Encerrando sistema...")
+    elif option == "0":
+        print("Closing system...")
         break
 
     else:
-        print("Opção inválida!")
+        print("Invalid option!")
 
 
 cursor.close()
-conexao.close()
+connection.close()
